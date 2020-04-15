@@ -77,12 +77,13 @@ const App:React.FC = () => {
 
   }, [statesRaw])
 
+
   return (
     <div className="App">
         <h1>
           US COVID Tracker
         </h1>
-
+        
         <StateSelect onChange={(e) => setSelectedState((e.currentTarget as HTMLInputElement).value)} selected={selectedState}/>
 
         <VictoryChart
@@ -149,5 +150,7 @@ const App:React.FC = () => {
     </div>
   );
 }
+
+
 
 export default App;
