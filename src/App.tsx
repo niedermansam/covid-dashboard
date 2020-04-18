@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
+
 import './App.css';
 import { VictoryLine, VictoryChart, VictoryTooltip, VictoryVoronoiContainer } from 'victory';
 import {StateSelect} from './components/StateSelect'
@@ -14,6 +22,48 @@ const pctIncrease = (today:number, change:number) => {
 }
 
 const App:React.FC = () => {
+
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/us">United States</Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+        <Switch>
+          <Route path="/us">
+            <USGraph />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    {/** 
+    <div className="App">
+      <h1>COVID-19 Dashboard</h1>
+      <USGraph />
+    </div>*/}
+    </Router>
+  );
+}
+
+const Home = () => {
+  return <div>
+    Home
+  </div>
+}
+
+const USGraph:React.FC = ({}) => {
 
   const [statesRaw, setStatesRaw] = useState<any>({});
   const [statesTidy, setStatesTidy] = useState<any>({});
@@ -78,76 +128,76 @@ const App:React.FC = () => {
   }, [statesRaw])
 
   return (
-    <div className="App">
-        <h1>
-          US COVID Tracker
-        </h1>
+    <>
+    <h2>
+    United States
+     </h2>
 
-        <StateSelect onChange={(e) => setSelectedState((e.currentTarget as HTMLInputElement).value)} selected={selectedState}/>
+  <StateSelect onChange={(e) => setSelectedState((e.currentTarget as HTMLInputElement).value)} selected={selectedState}/>
 
-        <VictoryChart
-    containerComponent={
-          <VictoryVoronoiContainer 
-          />
-        }>
+  <VictoryChart
+containerComponent={
+    <VictoryVoronoiContainer 
+    />
+  }>
 
-          
-        {statesTidy.MT ?  
-        <VictoryLine 
-            interpolation="natural"
+    
+  {statesTidy.MT ?  
+  <VictoryLine 
+      interpolation="natural"
 
 
-            style={{
-              data: { stroke: "#c43a31" }
-            }}
+      style={{
+        data: { stroke: "#c43a31" }
+      }}
 
-            events={ undefined /**[{
-              target: "parent",
-              eventHandlers: {
-                onMouseEnter: () => {
-                  return [
-                    {
-                      target: "data",
-                      eventKey: "all",
-                      mutation: (x:any) => {
-                        return {style: { stroke: "black", strokeWidth: 5 } }
-                      }
-                    }
-                  ];
-                },
-                onMouseOut: () => {
-                  return [
-                    {
-                      target: "data",
-                      eventKey: "all",
-                      mutation: (x:any) => {
-                        if(!x.style) return
-                        return null
-                      }
-                    }
-                  ];
-
+      events={ undefined /**[{
+        target: "parent",
+        eventHandlers: {
+          onMouseEnter: () => {
+            return [
+              {
+                target: "data",
+                eventKey: "all",
+                mutation: (x:any) => {
+                  return {style: { stroke: "black", strokeWidth: 5 } }
                 }
-              }      }] */ 
-            } 
+              }
+            ];
+          },
+          onMouseOut: () => {
+            return [
+              {
+                target: "data",
+                eventKey: "all",
+                mutation: (x:any) => {
+                  if(!x.style) return
+                  return null
+                }
+              }
+            ];
 
-            data={statesTidy[selectedState].map((x:any) => {
-              return {x: x.date, y: x.positive, label: `${usStatesObject[x.state]} \n ${(x.date as Date).toDateString()} \n ${x.positive} cases (${x.casesPctChange > 0 ? '+' : ''}${x.casesPctChange}%)`}
-            })}
-            
-
-            
-            labelComponent={
-              <VictoryTooltip
-                flyoutStyle={{ stroke: "tomato", strokeWidth: 1 }} 
-                /> }
-                
-            /> : null
           }
+        }      }] */ 
+      } 
+
+      data={statesTidy[selectedState].map((x:any) => {
+        return {x: x.date, y: x.positive, label: `${usStatesObject[x.state]} \n ${(x.date as Date).toDateString()} \n ${x.positive} cases (${x.casesPctChange > 0 ? '+' : ''}${x.casesPctChange}%)`}
+      })}
+      
+
+      
+      labelComponent={
+        <VictoryTooltip
+          flyoutStyle={{ stroke: "tomato", strokeWidth: 1 }} 
+          /> }
           
-        </VictoryChart>
-    </div>
-  );
+      /> : null
+    }
+    
+  </VictoryChart>
+
+    </>)
 }
 
 export default App;
